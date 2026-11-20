@@ -40,7 +40,39 @@ app.get('/api/tickets', (req, res) => {
 })
 
 app.post('/api/tickets', (req, res) => {
-    console.log(req.body)
+    const { title, status } = req.body
+
+    if (typeof req.body !== 'object'
+        || Array.isArray(req.body)
+        || req.body === null
+    ) {
+        res.status(400).json({
+            message: "Invalid request body"
+        })
+        return
+    }
+
+    if (typeof title !== 'string'
+        || title.trim().length < 3
+        || title.trim().length > 100
+    ) {
+        res.status(400).json({
+            message: "Invalid request title"
+        })
+        return
+    }
+
+    const validStatus = ['open', 'in_progress', 'resolved']
+
+    if (status !== undefined) {
+        if (!validStatus.includes(status)) {
+            res.status(400).json({
+                message: "Invalid request status"
+            })
+            return
+        }
+        // STOPPED HERE
+    }
 
     res.status(201).json({
         message: "Resource created"
