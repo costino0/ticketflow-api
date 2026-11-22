@@ -40,8 +40,6 @@ app.get('/api/tickets', (req, res) => {
 })
 
 app.post('/api/tickets', (req, res) => {
-    const { title, status } = req.body
-
     if (typeof req.body !== 'object'
         || Array.isArray(req.body)
         || req.body === null
@@ -52,12 +50,14 @@ app.post('/api/tickets', (req, res) => {
         return
     }
 
+    let { title, status } = req.body
+
     if (typeof title !== 'string'
         || title.trim().length < 3
         || title.trim().length > 100
     ) {
         res.status(400).json({
-            message: "Invalid request title"
+            message: "Invalid ticket title"
         })
         return
     }
@@ -67,16 +67,20 @@ app.post('/api/tickets', (req, res) => {
     if (status !== undefined) {
         if (!validStatus.includes(status)) {
             res.status(400).json({
-                message: "Invalid request status"
+                message: "Invalid ticket status"
             })
             return
         }
-        // STOPPED HERE
+    } else {
+        status = 'open'
     }
 
-    res.status(201).json({
-        message: "Resource created"
-    })
+    const ticketObj = {
+        title,
+        status
+    }
+
+    res.status(201).json(ticketObj)
 })
 
 app.get('/api/tickets/:id', (req, res) => {
